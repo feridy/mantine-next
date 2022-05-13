@@ -1,13 +1,11 @@
-import { Welcome } from '../components/Welcome/Welcome';
 import { LayoutHeader } from '../components/Layout/LayoutHeader';
-import { ColorSchemeToggle } from '../components/ColorSchemeToggle/ColorSchemeToggle';
+import { HomeSwiper } from '../components/Swiper/HomeSwiper';
 
 export default function HomePage() {
   return (
     <>
       <LayoutHeader />
-      <Welcome />
-      <ColorSchemeToggle />
+      <HomeSwiper />
     </>
   );
 }

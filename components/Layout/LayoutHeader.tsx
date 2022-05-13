@@ -1,7 +1,9 @@
 import { createStyles, Header, Container, Menu, Button, Group, Burger } from '@mantine/core';
-import { ChevronDownIcon, ChevronUpIcon } from '@modulz/radix-icons';
+import { ChevronDownIcon } from '@modulz/radix-icons';
 import Link from 'next/link';
 import { useState } from 'react';
+import { ColorSchemeToggle } from '../ColorSchemeToggle/ColorSchemeToggle';
+import { Logo } from '../Logo/Logo';
 
 const useStyles = createStyles((theme) => ({
   inner: {
@@ -41,6 +43,17 @@ const useStyles = createStyles((theme) => ({
 
   burger: {
     [theme.fn.largerThan('sm')]: {
+      display: 'none',
+    },
+  },
+
+  colorScheme: {
+    position: 'absolute',
+    right: theme.spacing.sm,
+    top: '50%',
+    transform: 'translateY(-50%)',
+
+    [theme.fn.smallerThan('sm')]: {
       display: 'none',
     },
   },
@@ -111,86 +124,75 @@ const MockData = {
   ],
 };
 
-const HeaderNavList: React.FC<HeaderNavListProps> = ({ links }) => {
-  const [opened, toggleOpened] = useState(false);
+const HeaderNavList: React.FC<HeaderNavListProps> = ({ links }) => (
+  <>
+    {links.map((link) => {
+      const MenuItem = link.links?.map((item) => (
+        <Link href={item.link} key={item.label}>
+          <Menu.Item
+            key={item.label}
+            component="a"
+            sx={(theme) => ({
+              '&:hover': {
+                backgroundColor:
+                  theme.colorScheme === 'dark'
+                    ? theme.fn.rgba(theme.colors[theme.primaryColor][6], 0.35)
+                    : theme.colors[theme.primaryColor][0],
+              },
+            })}
+          >
+            {item.label}
+          </Menu.Item>
+        </Link>
+      ));
 
-  return (
-    <>
-      {links.map((link) => {
-        const MenuItem = link.links?.map((item) => (
-          <Link href={item.link} key={item.label}>
-            <Menu.Item
-              key={item.label}
-              component="a"
-              sx={(theme) => ({
-                '&:hover': {
-                  backgroundColor:
-                    theme.colorScheme === 'dark'
-                      ? theme.fn.rgba(theme.colors[theme.primaryColor][6], 0.35)
-                      : theme.colors[theme.primaryColor][0],
-                },
-              })}
-            >
-              {item.label}
-            </Menu.Item>
-          </Link>
-        ));
-
-        if (MenuItem?.length) {
-          return (
-            <Menu
-              key={link.label}
-              trigger="hover"
-              delay={0}
-              placement="center"
-              gutter={-2}
-              onClose={() => toggleOpened(false)}
-              onOpen={() => toggleOpened(true)}
-              control={
-                <Group>
-                  <Link href={link.link}>
-                    <Button
-                      component="a"
-                      variant="subtle"
-                      rightIcon={
-                        opened ? (
-                          <ChevronUpIcon width={14} height={14} />
-                        ) : (
-                          <ChevronDownIcon width={14} height={14} />
-                        )
-                      }
-                    >
-                      {link.label}
-                    </Button>
-                  </Link>
-                </Group>
-              }
-            >
-              {MenuItem}
-            </Menu>
-          );
-        }
-
+      if (MenuItem?.length) {
         return (
-          <Link href={link.link} key={link.label}>
-            <Button component="a" variant="subtle">
-              {link.label}
-            </Button>
-          </Link>
+          <Menu
+            key={link.label}
+            trigger="hover"
+            delay={0}
+            placement="center"
+            gutter={-2}
+            control={
+              <Group>
+                <Link href={link.link}>
+                  <Button
+                    component="a"
+                    variant="subtle"
+                    rightIcon={<ChevronDownIcon width={14} height={14} />}
+                  >
+                    {link.label}
+                  </Button>
+                </Link>
+              </Group>
+            }
+          >
+            {MenuItem}
+          </Menu>
         );
-      })}
-    </>
-  );
-};
+      }
+
+      return (
+        <Link href={link.link} key={link.label}>
+          <Button component="a" variant="subtle">
+            {link.label}
+          </Button>
+        </Link>
+      );
+    })}
+  </>
+);
 
 export const LayoutHeader: React.FC = () => {
   const { classes } = useStyles();
   const [opened, toggleOpened] = useState(false);
 
   return (
-    <Header height={56}>
+    <Header height={56} fixed>
       <Container>
         <div className={classes.inner}>
+          <Logo />
           <Group spacing={5} className={classes.links}>
             <HeaderNavList links={MockData.links} />
           </Group>
@@ -202,6 +204,9 @@ export const LayoutHeader: React.FC = () => {
           />
         </div>
       </Container>
+      <div className={classes.colorScheme}>
+        <ColorSchemeToggle />
+      </div>
     </Header>
   );
 };
