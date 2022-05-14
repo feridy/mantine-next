@@ -3,12 +3,12 @@ import { SwiperComponent } from './SwiperComponent';
 
 const useStyles = createStyles(() => ({
   root: {
-    marginTop: 58,
     minHeight: 418,
   },
   wrapper: {
     position: 'relative',
     width: '100%',
+    minHeight: 418,
     overflow: 'hidden',
     paddingBottom: '41.666667%',
   },
